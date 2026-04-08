@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Home, Settings, PieChart, List, ArrowRightLeft } from 'lucide-react';
+import { LogOut, Home, Settings, PieChart, List, ArrowRightLeft, BookOpen } from 'lucide-react';
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
@@ -52,6 +52,14 @@ export default function Navbar() {
               fontWeight: isActive ? 600 : 500, whiteSpace: 'nowrap', fontSize: '0.9rem'
             })}>
               <Settings size={18} /> Master Data
+            </NavLink>
+            <NavLink to="/guide" style={({ isActive }) => ({ 
+              display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.4rem 0.6rem', 
+              borderRadius: '8px', color: isActive ? 'var(--primary-color)' : 'var(--text-secondary)',
+              backgroundColor: isActive ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+              fontWeight: isActive ? 600 : 500, whiteSpace: 'nowrap', fontSize: '0.9rem'
+            })}>
+              <BookOpen size={18} /> Hướng dẫn
             </NavLink>
           </nav>
         </div>

@@ -8,6 +8,7 @@ import MasterData from './pages/MasterData';
 import Transactions from './pages/Transactions';
 import IncomeAllocation from './pages/IncomeAllocation';
 import Transfer from './pages/Transfer';
+import UserGuide from './pages/UserGuide';
 import Layout from './components/Layout';
 import './index.css';
 
@@ -60,6 +61,14 @@ function AppRoutes() {
         element={
           <PrivateRoute>
             <MasterData />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/guide" 
+        element={
+          <PrivateRoute>
+            <UserGuide />
           </PrivateRoute>
         } 
       />

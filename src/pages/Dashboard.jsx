@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { LogOut, PlusCircle, PieChart, Info } from 'lucide-react';
+import { LogOut, PlusCircle, PieChart, Info, BookOpen } from 'lucide-react';
 import { sortMasterFunds, sortDetailedFunds, formatCurrency } from '../utils/helpers';
 
 export default function Dashboard() {
@@ -78,6 +78,21 @@ export default function Dashboard() {
       <div style={{ padding: '1.5rem', backgroundColor: 'var(--surface-color)', borderLeft: '4px solid var(--success-color)', borderRadius: '8px', marginBottom: '2rem', boxShadow: 'var(--box-shadow)' }}>
         <h4 style={{ color: 'var(--text-primary)', marginBottom: '0.75rem', fontStyle: 'italic', fontWeight: 600 }}>"Không quan trọng bạn kiếm được bao nhiêu, mà quan trọng là bạn giữ được bao nhiêu và trong bao lâu"</h4>
         <h4 style={{ color: 'var(--danger-color)', margin: 0, fontStyle: 'italic' }}>"Không lo xa ắt có họa gần"</h4>
+      </div>
+
+      <div style={{ padding: '1.25rem', backgroundColor: 'rgba(59, 130, 246, 0.05)', border: '1px dashed var(--primary-color)', borderRadius: '12px', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--primary-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BookOpen size={20} />
+          </div>
+          <div>
+            <h5 style={{ margin: 0, color: 'var(--text-primary)' }}>Bạn là người mới?</h5>
+            <p className="text-secondary" style={{ margin: 0, fontSize: '0.85rem' }}>Hãy xem qua hướng dẫn để làm chủ hệ thống 5 quỹ tài chính của mình hiệu quả nhất.</p>
+          </div>
+        </div>
+        <button className="btn btn-outline" onClick={() => navigate('/guide')} style={{ color: 'var(--primary-color)', borderColor: 'var(--primary-color)', whiteSpace: 'nowrap' }}>
+          Xem hướng dẫn
+        </button>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
