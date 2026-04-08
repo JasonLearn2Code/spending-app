@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Dashboard as DashboardIcon, PlusCircle, PieChart, ArrowRightLeft, Settings, Info } from 'lucide-react';
+import { BookOpen, LayoutDashboard as DashboardIcon, PlusCircle, PieChart, ArrowRightLeft, Settings, Info } from 'lucide-react';
 
 const GuideSection = ({ title, icon: Icon, description, image, steps }) => (
   <div className="card" style={{ marginBottom: '2.5rem', overflow: 'hidden', padding: 0 }}>
