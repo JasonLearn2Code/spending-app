@@ -12,20 +12,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    // TEMPORARY BYPASS FOR LIVE PREVIEW
+    const mockUser = { id: '00000000-0000-0000-0000-000000000000', email: 'preview@example.com' };
+    setUser(mockUser);
+    setSession({ user: mockUser });
+    setLoading(false);
   }, []);
 
 
