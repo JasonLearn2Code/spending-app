@@ -12,8 +12,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [expandedFundId, setExpandedFundId] = useState(null);
   useEffect(() => {
-    fetchMasterFunds();
-  }, [user]);
+    if (user?.id) fetchMasterFunds();
+  }, [user?.id]);
 
   const fetchMasterFunds = async () => {
     try {
@@ -27,20 +27,54 @@ export default function Dashboard() {
         .select('master_fund_id, balance, id, name, master_funds(name)')
         .eq('user_id', user.id);
 
+      const { data: categories, error: cError } = await supabase
+        .from('categories')
+        .select('name, type')
+        .eq('user_id', user.id);
+
       if (mError) throw mError;
       if (dError) throw dError;
+      if (cError) throw cError;
 
-      // Logic tạo quỹ Mặc định
+      // Logic tạo danh mục mặc định
+      const defaultCategories = [
+        { name: 'Ăn uống', type: 'expense' },
+        { name: 'Tiền điện', type: 'expense' },
+        { name: 'Đổ xăng', type: 'expense' },
+        { name: 'Tiền lương', type: 'income' },
+        { name: 'Tiền thưởng', type: 'income' }
+      ];
+      const missingCategories = defaultCategories.filter(
+        dc => !categories.some(c => c.name === dc.name && c.type === dc.type)
+      );
+      if (missingCategories.length > 0) {
+        await supabase.from('categories').insert(
+          missingCategories.map(c => ({ user_id: user.id, name: c.name, type: c.type }))
+        );
+      }
+
+      // Logic tạo túi Mặc định
       const missingDefaults = mFunds.filter(mf => !dFunds.some(df => df.master_fund_id === mf.id));
       if (missingDefaults.length > 0) {
-        const defaultFunds = missingDefaults.map(mf => ({
-          user_id: user.id,
-          master_fund_id: mf.id,
-          name: 'Mặc định',
-          balance: 0
-        }));
-        await supabase.from('detailed_funds').insert(defaultFunds);
-        // Fetch lại thư mục con
+        let defaultFundsToInsert = [];
+        missingDefaults.forEach(mf => {
+          if (mf.name.includes('Gia đình')) {
+            defaultFundsToInsert.push(
+              { user_id: user.id, master_fund_id: mf.id, name: 'Ăn uống', balance: 0 },
+              { user_id: user.id, master_fund_id: mf.id, name: 'Sinh hoạt phí', balance: 0 }
+            );
+          } else if (mf.name.includes('Tạo phúc')) {
+            defaultFundsToInsert.push(
+              { user_id: user.id, master_fund_id: mf.id, name: 'Tạo phúc trả nợ 6T', balance: 0 },
+              { user_id: user.id, master_fund_id: mf.id, name: 'Lộ phí gia tiên', balance: 0 }
+            );
+          } else {
+            defaultFundsToInsert.push({ user_id: user.id, master_fund_id: mf.id, name: 'Mặc định', balance: 0 });
+          }
+        });
+
+        await supabase.from('detailed_funds').insert(defaultFundsToInsert);
+        // Fetch lại túi
         const newDRes = await supabase.from('detailed_funds').select('master_fund_id, balance, id, name').eq('user_id', user.id);
         if (newDRes.data) {
            dFunds = newDRes.data;
@@ -123,7 +157,7 @@ export default function Dashboard() {
                 {expandedFundId === fund.id && (
                   <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
                     {fund.children.length === 0 ? (
-                      <p className="text-secondary" style={{ fontSize: '0.85rem' }}>Chưa có quỹ chi tiết nào.</p>
+                      <p className="text-secondary" style={{ fontSize: '0.85rem' }}>Chưa có túi nào.</p>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {fund.children.map(child => (

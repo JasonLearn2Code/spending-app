@@ -18,8 +18,8 @@ export default function Transfer() {
   const [transDate, setTransDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    fetchFunds();
-  }, [user]);
+    if (user?.id) fetchFunds();
+  }, [user?.id]);
 
   const fetchFunds = async () => {
     setLoading(true);
@@ -45,7 +45,7 @@ export default function Transfer() {
       return toast.error('Vui lòng điền đủ thông tin bắt buộc.');
     }
     if (sourceFundId === targetFundId) {
-      return toast.error('Quỹ nguồn và Quỹ đích phải khác nhau.');
+      return toast.error('Túi nguồn và Túi đích phải khác nhau.');
     }
 
     const numericAmount = Number(amount.replace(/\D/g, ''));
@@ -54,10 +54,10 @@ export default function Transfer() {
     const sourceFund = detailedFunds.find(f => f.id === sourceFundId);
     const targetFund = detailedFunds.find(f => f.id === targetFundId);
 
-    if (!sourceFund || !targetFund) return toast.error('Không tìm thấy quỹ hợp lệ.');
+    if (!sourceFund || !targetFund) return toast.error('Không tìm thấy túi hợp lệ.');
 
     if (Number(sourceFund.balance) < numericAmount) {
-       return toast.error('Quỹ nguồn không đủ số dư để điều chuyển.');
+       return toast.error('Túi nguồn không đủ số dư để điều chuyển.');
     }
 
     if (sourceFund.master_fund_id !== targetFund.master_fund_id) {
@@ -119,7 +119,7 @@ export default function Transfer() {
     <>
       <div style={{ marginBottom: '2rem' }}>
         <h3>Điều chuyển</h3>
-        <p className="text-secondary">Chuyển tiền giữa các quỹ.</p>
+        <p className="text-secondary">Chuyển tiền giữa các túi.</p>
       </div>
 
       <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -128,9 +128,9 @@ export default function Transfer() {
         ) : (
           <form onSubmit={handleTransfer}>
             <div className="mb-4">
-              <label className="input-label">Quỹ Nguồn (Trừ tiền)</label>
+              <label className="input-label">Túi Nguồn (Trừ tiền)</label>
               <select className="input-field" value={sourceFundId} onChange={(e) => setSourceFundId(e.target.value)} required>
-                <option value="">-- Chọn quỹ nguồn --</option>
+                <option value="">-- Chọn túi nguồn --</option>
                 {detailedFunds.map(f => (
                   <option key={f.id} value={f.id}>
                     {f.master_funds?.name} \ {f.name} (Số dư: {formatCurrency(f.balance)}đ)
@@ -146,9 +146,9 @@ export default function Transfer() {
             </div>
 
             <div className="mb-4">
-              <label className="input-label">Quỹ Đích (Nhận tiền)</label>
+              <label className="input-label">Túi Đích (Nhận tiền)</label>
               <select className="input-field" value={targetFundId} onChange={(e) => setTargetFundId(e.target.value)} required>
-                <option value="">-- Chọn quỹ đích --</option>
+                <option value="">-- Chọn túi đích --</option>
                 {detailedFunds.map(f => (
                   <option key={f.id} value={f.id}>
                     {f.master_funds?.name} \ {f.name}

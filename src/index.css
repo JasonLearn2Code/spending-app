@@ -185,3 +185,32 @@ a:hover {
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* Responsive Utilities */
+.allocation-layout {
+  grid-template-columns: minmax(300px, 1fr) 2fr;
+}
+.grid-allocation-row {
+  grid-template-columns: 80px 1fr 1fr 30px;
+}
+
+@media (max-width: 768px) {
+  .grid-cols-2, .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .allocation-layout {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .grid-allocation-row {
+    grid-template-columns: 1fr 1fr 1fr 30px !important;
+  }
+  
+  /* On very small screen, collapse more */
+  @media (max-width: 480px) {
+    .grid-allocation-row {
+      grid-template-columns: 80px 1fr 30px !important;
+    }
+  }
+}

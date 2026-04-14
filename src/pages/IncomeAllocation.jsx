@@ -24,8 +24,8 @@ export default function IncomeAllocation() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, [user]);
+    if (user?.id) fetchData();
+  }, [user?.id]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -287,7 +287,7 @@ export default function IncomeAllocation() {
         </div>
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: 'minmax(300px, 1fr) 2fr' }}>
+      <div className="allocation-layout grid gap-4">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="card" style={{ borderTop: '4px solid var(--primary-color)' }}>
             <h4 className="mb-4 text-center">TỔNG THU NHẬP</h4>
@@ -387,7 +387,7 @@ export default function IncomeAllocation() {
               </div>
               
               {allocations[mf.id]?.map((line, index) => (
-                <div key={line.id} className="grid" style={{ gridTemplateColumns: '80px 1fr 1fr 30px', gap: '0.5rem', alignItems: 'end', marginBottom: '0.5rem' }}>
+                <div key={line.id} className="grid grid-allocation-row gap-2 mb-2 items-end">
                   <div>
                     {index === 0 && <label className="input-label" style={{ fontSize: '0.8rem' }}>Tỷ lệ (%)</label>}
                     <input 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Plus, Trash2, Edit2, Wallet, Tag } from 'lucide-react';
+import { Plus, Trash2, Edit2, Wallet, Tag, Smile } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
 import { sortMasterFunds, sortDetailedFunds, formatCurrency } from '../utils/helpers';
@@ -20,10 +20,13 @@ export default function MasterData() {
   const [selectedMasterFund, setSelectedMasterFund] = useState('');
   const [newCatName, setNewCatName] = useState('');
   const [newCatType, setNewCatType] = useState('expense');
+  const [newCatIcon, setNewCatIcon] = useState('💰');
+  
+  const EMOJI_LIST = ['💰', '🍔', '⚡', '🚗', '🎁', '🛍️', '🏠', '✈️', '💊', '🎓', '💸', '💪', '🏥', '📱', '🍼', '🐶'];
 
   useEffect(() => {
-    fetchData();
-  }, [user]);
+    if (user?.id) fetchData();
+  }, [user?.id]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -71,14 +74,27 @@ export default function MasterData() {
   };
 
   const handleDeleteFund = async (id) => {
-    if (!window.confirm('Bạn có chắc muốn xóa quỹ này?')) return;
+    if (!window.confirm('Bạn có chắc muốn xóa túi này?')) return;
     try {
       const { error } = await supabase.from('detailed_funds').delete().eq('id', id);
       if (error) throw error;
       setDetailedFunds(detailedFunds.filter(f => f.id !== id));
-      toast.success('Đã xóa quỹ!');
+      toast.success('Đã xóa túi!');
     } catch (error) {
-      toast.error('Lỗi xóa quỹ: ' + error.message);
+      toast.error('Lỗi xóa túi: ' + error.message);
+    }
+  };
+
+  const handleEditFund = async (fund) => {
+    const newName = window.prompt('Nhập tên túi mới:', fund.name);
+    if (!newName || newName === fund.name) return;
+    try {
+      const { error } = await supabase.from('detailed_funds').update({ name: newName }).eq('id', fund.id);
+      if (error) throw error;
+      setDetailedFunds(detailedFunds.map(f => f.id === fund.id ? { ...f, name: newName } : f));
+      toast.success('Đã đổi tên túi!');
+    } catch (error) {
+       toast.error('Lỗi cập nhật: ' + error.message);
     }
   };
 
@@ -88,7 +104,7 @@ export default function MasterData() {
 
     try {
       const { data, error } = await supabase.from('categories').insert([
-        { name: newCatName, type: newCatType, user_id: user.id }
+        { name: newCatName, type: newCatType, icon: newCatIcon, user_id: user.id }
       ]).select();
       
       if (error) throw error;
@@ -112,11 +128,24 @@ export default function MasterData() {
     }
   };
 
+  const handleEditCategory = async (cat) => {
+    const newName = window.prompt('Nhập tên hạng mục mới:', cat.name);
+    if (!newName || newName === cat.name) return;
+    try {
+      const { error } = await supabase.from('categories').update({ name: newName }).eq('id', cat.id);
+      if (error) throw error;
+      setCategories(categories.map(c => c.id === cat.id ? { ...c, name: newName } : c));
+      toast.success('Đã đổi tên hạng mục!');
+    } catch (error) {
+       toast.error('Lỗi cập nhật: ' + error.message);
+    }
+  };
+
   return (
     <>
       <div style={{ marginBottom: '2rem' }}>
         <h3>Quản lý Hệ thống (Master Data)</h3>
-        <p className="text-secondary">Thiết lập các quỹ chi tiết và các khoản mục giao dịch của riêng bạn.</p>
+        <p className="text-secondary">Thiết lập các túi (quỹ phụ) và các khoản mục giao dịch của riêng bạn.</p>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--text-secondary)', paddingBottom: '0.5rem' }}>
@@ -124,7 +153,7 @@ export default function MasterData() {
           onClick={() => setActiveTab('funds')}
           style={{ background: 'none', border: 'none', color: activeTab === 'funds' ? 'var(--primary-color)' : 'var(--text-secondary)', fontWeight: activeTab === 'funds' ? 'bold' : 'normal', fontSize: '1rem', cursor: 'pointer', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
         >
-          <Wallet size={18} /> Quỹ chi tiết
+          <Wallet size={18} /> Các Túi (Quỹ con)
         </button>
         <button 
           onClick={() => setActiveTab('categories')}
@@ -139,10 +168,10 @@ export default function MasterData() {
       ) : activeTab === 'funds' ? (
         <div className="grid grid-cols-2 gap-4" style={{ gridTemplateColumns: 'minmax(300px, 1fr) 2fr' }}>
           <div className="card">
-            <h4 className="mb-4">Tạo Quỹ Mới</h4>
+            <h4 className="mb-4">Tạo Túi Mới</h4>
             <form onSubmit={handleAddFund}>
               <div className="mb-4">
-                <label className="input-label">Tên Quỹ</label>
+                <label className="input-label">Tên Túi</label>
                 <input 
                   type="text" 
                   className="input-field" 
@@ -161,15 +190,15 @@ export default function MasterData() {
                 </select>
               </div>
               <button type="submit" className="btn btn-primary" style={{ width: '100%', gap: '0.5rem' }}>
-                <Plus size={18} /> Thêm Quỹ
+                <Plus size={18} /> Thêm Túi
               </button>
             </form>
           </div>
 
           <div className="card">
-            <h4 className="mb-4">Danh sách Quỹ Chi Tiết</h4>
+            <h4 className="mb-4">Danh sách Túi</h4>
             {detailedFunds.length === 0 ? (
-              <p className="text-secondary text-center py-4">Bạn chưa tạo quỹ chi tiết nào.</p>
+              <p className="text-secondary text-center py-4">Bạn chưa tạo túi nào.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {masterFunds.map(mf => {
@@ -185,9 +214,14 @@ export default function MasterData() {
                               <strong>{df.name}</strong>
                               <div className="text-secondary" style={{ fontSize: '0.8rem' }}>Số dư: {formatCurrency(df.balance)} ₫</div>
                             </div>
-                            <button onClick={() => handleDeleteFund(df.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', padding: '0.2rem' }}>
-                              <Trash2 size={16} />
-                            </button>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button onClick={() => handleEditFund(df)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.2rem' }}>
+                                <Edit2 size={16} />
+                              </button>
+                              <button onClick={() => handleDeleteFund(df.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', padding: '0.2rem' }}>
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -215,6 +249,21 @@ export default function MasterData() {
                 />
               </div>
               <div className="mb-4">
+                <label className="input-label">Icon</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {EMOJI_LIST.map(emoji => (
+                    <button 
+                      key={emoji} 
+                      type="button"
+                      onClick={() => setNewCatIcon(emoji)}
+                      style={{ fontSize: '1.5rem', background: newCatIcon === emoji ? 'var(--primary-color)' : 'transparent', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.25rem' }}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
                 <label className="input-label">Loại</label>
                 <select className="input-field" value={newCatType} onChange={e => setNewCatType(e.target.value)}>
                   <option value="expense">Khoản Chi</option>
@@ -236,20 +285,30 @@ export default function MasterData() {
                 <h5 style={{ color: 'var(--text-secondary)' }}>Khoản Thu</h5>
                 {categories.filter(c => c.type === 'income').map(c => (
                   <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', backgroundColor: 'var(--bg-color)', borderRadius: '8px', borderLeft: '4px solid var(--success-color)' }}>
-                    <strong>{c.name}</strong>
-                    <button onClick={() => handleDeleteCategory(c.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer' }}>
-                      <Trash2 size={16} />
-                    </button>
+                    <strong>{c.icon || '💰'} {c.name}</strong>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => handleEditCategory(c)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.2rem' }}>
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => handleDeleteCategory(c.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', padding: '0.2rem' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 ))}
                 
                 <h5 style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Khoản Chi</h5>
                 {categories.filter(c => c.type === 'expense').map(c => (
                   <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', backgroundColor: 'var(--bg-color)', borderRadius: '8px', borderLeft: '4px solid var(--danger-color)' }}>
-                    <strong>{c.name}</strong>
-                    <button onClick={() => handleDeleteCategory(c.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer' }}>
-                      <Trash2 size={16} />
-                    </button>
+                    <strong>{c.icon || '💸'} {c.name}</strong>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => handleEditCategory(c)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.2rem' }}>
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => handleDeleteCategory(c.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', padding: '0.2rem' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

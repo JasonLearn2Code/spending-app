@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { PlusCircle, ArrowDownCircle, ArrowUpCircle, Trash2, Edit2, Search } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { sortMasterFunds, sortDetailedFunds, formatCurrency } from '../utils/helpers';
+import { sortMasterFunds, sortDetailedFunds, formatCurrency, formatDate } from '../utils/helpers';
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -26,8 +26,8 @@ export default function Transactions() {
   const [transDate, setTransDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    fetchData();
-  }, [user]);
+    if (user?.id) fetchData();
+  }, [user?.id]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -211,9 +211,9 @@ export default function Transactions() {
                 <input type="date" className="input-field" value={transDate} onChange={e => setTransDate(e.target.value)} required />
               </div>
               <div className="mb-4">
-                <label className="input-label">Quỹ (Nguồn tiền)</label>
+                <label className="input-label">Túi (Nguồn tiền)</label>
                 <select className="input-field" value={fundId} onChange={e => setFundId(e.target.value)} required>
-                  <option value="">-- Chọn Quỹ --</option>
+                  <option value="">-- Chọn Túi --</option>
                   {detailedFunds.map(f => (
                     <option key={f.id} value={f.id}>{f.master_funds?.name} \ {f.name} (Số dư: {formatCurrency(f.balance)}đ)</option>
                   ))}
@@ -275,9 +275,9 @@ export default function Transactions() {
                       {isExpense ? <ArrowDownCircle size={20} /> : <ArrowUpCircle size={20} />}
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '1rem' }}>{t.categories?.name || 'Chưa phân loại'}</strong>
+                      <strong style={{ display: 'block', fontSize: '1rem' }}>{t.categories?.icon && `${t.categories.icon} `}{t.categories?.name || 'Chưa phân loại'}</strong>
                       <span className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                        {t.detailed_funds?.name} • {new Date(t.transaction_date).toLocaleDateString('vi-VN')} {t.note && ` • ${t.note}`}
+                        {t.detailed_funds?.name} • {formatDate(t.transaction_date)} {t.note && ` • ${t.note}`}
                       </span>
                     </div>
                   </div>

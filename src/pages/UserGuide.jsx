@@ -34,15 +34,14 @@ const GuideSection = ({ title, icon: Icon, description, image, steps }) => (
 export default function UserGuide() {
   const sections = [
     {
-      title: "1. Trang Tổng quan (Dashboard)",
-      icon: PieChart,
-      description: "Nơi bạn theo dõi số dư của tất cả các quỹ và tình hình tài chính tổng quát.",
-      image: "/guide/dashboard.png",
+      title: "1. Quản lý Hệ thống (Master Data)",
+      icon: Settings,
+      description: "Cấu hình danh sách các túi tiền và hạng mục chi tiêu cá nhân để bắt đầu.",
+      image: "/guide/master_data.png",
       steps: [
-        "Xem tổng số dư của 5 Quỹ lớn.",
-        "Bấm vào nút 'Chi tiết' ở mỗi thẻ quỹ để xem các túi tiền (Quỹ nhỏ) bên trong.",
-        "Dùng nút 'Thêm' nhanh ở từng quỹ nhỏ để ghi chép giao dịch ngay lập tức.",
-        "Thông tin được sắp xếp theo đúng thứ tự ưu tiên: Gia đình -> Tiết kiệm -> Tạo phúc -> Tái đầu tư -> Chi tiêu."
+        "Thêm mới các túi tiền (Ví dụ: Sinh hoạt phí, Lộ phí gia tiên, Techcombank, Ví Momo) vào 5 Quỹ lớn.",
+        "Tạo thêm các Hạng mục chi/thu có icon theo ý thích.",
+        "Xóa hoặc sửa tên túi và hạng mục để giữ hệ thống luôn gọn gàng."
       ]
     },
     {
@@ -51,45 +50,46 @@ export default function UserGuide() {
       description: "Ghi lại mọi khoản chi tiêu hoặc thu nhập phát sinh hàng ngày.",
       image: "/guide/transactions.png",
       steps: [
-        "Chọn loại giao dịch: Thu nhập (màu xanh) hoặc Chi tiêu (màu đỏ).",
-        "Nhập số tiền và chọn đúng hạng mục (Ví dụ: Ăn uống, Lương...).",
-        "Chọn Quỹ tiền thực hiện giao dịch (Ví dụ: Ví tiền mặt, Thẻ ngân hàng).",
+        "Chọn loại giao dịch: Khoản Thu (màu xanh) hoặc Khoản Chi (màu đỏ).",
+        "Nhập số tiền và chọn đúng hạng mục (Ví dụ: Ăn uống, Tiền lương...).",
+        "Chọn Túi thực hiện giao dịch (Ví dụ: Sinh hoạt phí, Lộ phí gia tiên).",
         "Sử dụng ô Tìm kiếm để tra cứu lại các giao dịch cũ theo tên hoặc ghi chú."
       ]
     },
     {
-      title: "3. Chia thu nhập (Income Allocation)",
+      title: "3. Nhận lương / Chia thu nhập (Income Allocation)",
       icon: PieChart,
-      description: "Tính năng quan trọng nhất để quản lý tài chính theo công thức 5 quỹ.",
+      description: "Tính năng quan trọng nhất để thiết lập công thức 5 quỹ tự động cho thu nhập hàng tháng.",
       image: "/guide/allocation.png",
       steps: [
         "Nhập tổng số tiền thu nhập mới nhận được.",
-        "Phân bổ tỷ lệ (%) hoặc số tiền cụ thể vào từng quỹ theo kế hoạch tài chính của bạn.",
-        "Sử dụng 'Lưu làm mẫu' để áp dụng nhanh cho các lần nhận lương sau.",
-        "Hệ thống sẽ tự động cộng số dư vào các quỹ tương ứng sau khi bạn xác nhận."
+        "Phân bổ tỷ lệ (%) hoặc số tiền cụ thể vào từng Túi theo kế hoạch tài chính của bạn.",
+        "Sử dụng 'Lưu lại thành Mẫu mới' để lưu công thức cho lần nhận lương sau.",
+        "Hệ thống sẽ tự động tự chia số tiền vào các Túi ngay khi bạn xác nhận."
       ]
     },
     {
-      title: "4. Điều chuyển tiền (Transfer)",
+      title: "4. Trang Tổng quan (Dashboard)",
+      icon: DashboardIcon,
+      description: "Nơi bạn theo dõi số dư của tất cả các Quỹ và bức tranh tổng thể tài chính.",
+      image: "/guide/dashboard.png",
+      steps: [
+        "Xem tổng số tiền ở 5 Quỹ chính.",
+        "Bấm vào nút 'Chi tiết' ở mỗi thẻ Quỹ để xem số dư của các túi con.",
+        "Dùng nút 'Thêm' nhanh trong chi tiết Túi để ghi chép nhanh giao dịch.",
+        "Thông tin được sắp xếp theo chuẩn thứ tự: Gia đình -> Tiết kiệm -> Tạo phúc -> Tái đầu tư -> Chi tiêu."
+      ]
+    },
+    {
+      title: "5. Điều chuyển (Transfer)",
       icon: ArrowRightLeft,
-      description: "Di chuyển tiền qua lại giữa các túi tiền của bạn.",
+      description: "Di chuyển tiền qua lại giữa các Túi.",
       image: "/guide/transfer.png",
       steps: [
-        "Chọn 'Quỹ nguồn' (nơi tiền đi) và 'Quỹ đích' (nơi tiền đến).",
-        "Nhập số tiền muốn chuyển và ghi chú lý do.",
-        "Hệ thống sẽ tự động cập nhật số dư của cả hai quỹ ngay lập tức.",
-        "Hỗ trợ quản lý dòng tiền linh hoạt giữa các tài khoản ngân hàng và ví."
-      ]
-    },
-    {
-      title: "5. Quản lý Dữ liệu gốc (Master Data)",
-      icon: Settings,
-      description: "Cấu hình danh sách các quỹ và hạng mục chi tiêu cá nhân.",
-      image: "/guide/master_data.png",
-      steps: [
-        "Thêm mới các túi tiền (Ví dụ: Thẻ Techcombank, Ví Momo) vào 5 Quỹ lớn.",
-        "Tạo thêm các Hạng mục chi tiêu/thu nhập phù hợp với nhu cầu cá nhân.",
-        "Xóa hoặc sửa các thông tin đã tạo để giữ hệ thống luôn gọn gàng."
+        "Chọn 'Túi Nguồn' (nơi tiền đi) và 'Túi Đích' (nơi tiền đến).",
+        "Nhập số tiền cần chuyển và ghi chú.",
+        "Hệ thống tự động cập nhật số dư của hai Túi ngay lập tức.",
+        "Nên hạn chế chuyển tiền chéo giữa các Quỹ lớn khác nhau để đảm bảo sự kỷ luật."
       ]
     }
   ];
